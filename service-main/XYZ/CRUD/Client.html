@@ -1,0 +1,182 @@
+<html>
+    <head>
+        <style>
+            /* body{
+                background-image: url("../IMAGES/contactUs.jpg");
+                /* background-repeat: no-repeat; */
+                /* width: 100%;    
+                height: 100%;
+            }  */
+            
+            h1{
+                background-color:lightblue;
+                height: 50px;
+                width: 100%;
+                text-align: center;
+                color:white;
+              
+            }
+            nav{
+                background-color:lightblue;
+                height: 50px;
+                width: 100%;
+                text-align: center;
+                color:white;
+              
+            }
+            .section{
+                display: inline-block;
+                margin:5px;
+                width: 45%;
+                background-color:lightblue;
+                vertical-align: top;
+            }
+           a{
+                
+                width: 100px;
+                height: 40px;
+                padding: 10px;
+                margin:5px;
+                align-content: center;
+                margin-left:15%;
+            }
+            a:hover{
+                background-color: brown;
+                width: 100px;
+                padding: 20px;
+                color: aliceblue;
+            }
+        </style>
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+            integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+            
+        <script> 
+            const url = "http://localhost:1234/Students";
+            function saveChanges(){
+                let obj ={};
+             //take the values from the inputs..
+                obj.studentId = $("#uId").text();
+                obj.studentName = $("#studentName").val();
+                obj.studentDepartment = $("#studentDepartment").val();
+                obj.studentCity = $("#studentCity").val();
+                obj.studentEmail = $("#studentEmail").val();
+                obj.studentPhone = $("#studentPhone").val();
+                //Use this function for Put and post operation
+                $.ajax({
+                    method : 'PUT',
+                    url : url,
+                    data : obj,
+                    success : (data)=>{
+                        alert(data);
+                    }
+                })
+           
+            }
+            function findRecord(){
+                $("div").hide(2000);
+                $("div:eq(1)").show(2000);
+                const id = $(this).attr("uId");
+                let temp = url + "/" + id;
+                $.get(temp, (data) => {
+                    let student = JSON.parse(data);
+                    $("#uId").text(student.studentId);
+                    $("#studentName").val(student.studentName);
+                    $("#studentDepartment").val(student.studentDepartment);
+                    $("#studentCity").val(student.studentCity);
+                    $("#useEmail").val(student.studentEmail);
+                    $("#studentPhone").val(student.studentPhone);
+                })
+            }
+            function showAddDiv(){
+                $("div").hide(2000);
+                $("div:last").show(2000);
+            }
+
+            function addChanges(){
+                //create the object
+                let obj = { };
+                debugger;
+                //data assigned to object
+                obj.studentId = $("#newId").val();
+                obj.studentName = $("#newName").val();
+                obj.studentDepartment = $("#newDepartment").val();
+                obj.studentCity = $("#newCity").val();
+                obj.studentEmail = $("#newEmail").val();
+                obj.studentPhone = $("#newPhone").val();
+                $.post(url, obj, (data)=>{
+                    alert(data);
+                    $("input").val("");
+                    $("div").hide(2000);
+                })
+                //call the post operation of the jquery ajax....
+                //display the message
+            }
+            function populateData(){
+                
+                $("div").hide(2000);
+                $("div:first").show(2000);
+                $("table").find("tr:gt(0)").remove();
+                //Get the data from the server
+                $.get(url, (data)=>{
+                    let array = JSON.parse(data);
+                    for (const student of array) {
+                        const row = `<tr><td>${student.studentId}</td><td>${student.studentName}</td><td>${student.studentDepartment}</td><td>${student.studentCity}</td><td>${student.sudentEmail}</td><td>${student.studentPhone}</td><td><a href="#" class="edit" uId = ${student.studentId}>Edit</a></tr>`
+                        $("table").append(row);
+                    }
+                    $(".edit").click(findRecord);               
+                })
+                //Populate the data into the table
+                
+            }        
+            function init(){
+                $("div").hide(2000);
+                $("a:first").click(populateData);
+                $("a:eq(1)").click(showAddDiv);
+                $("button:eq(0)").click(saveChanges);
+                $("button:eq(1)").click(addChanges);
+            }
+            $(document).ready(init);
+        </script>
+    </head>
+    <body>
+        <h1>Student Registration</h1>
+        <nav>
+            <a href="#" style="color:black;">Show All</a>
+            <a href="#"style="color:black;">Add New</a>
+            <a href="#"style="color:black;">About Us</a>
+        </nav>
+        <div class="section">
+            <table border="1">
+                <tr>
+                    <th>student ID</th>
+                    <th>student Name</th>
+                    <th>student Department</th>
+                    <th>student City</th>
+                    <th>student Email</th>
+                    <th>student Phone</th>
+                    <th>Options</th>
+                </tr>
+            </table>
+        </div>
+        <div class="section">
+            <h2>Details of the Student</h2>
+            <p>student ID : <input id="uId"/></p>
+            <p>student Name : <input id="studentName"/></p>
+            <p>student Department : <input id="studentDepartment"/></p>
+            <p>student City : <input id="studentCity"/></p>
+            <p>student Email : <input id="studentEmail"/></p>
+            <p>student Phone : <input id="studentPhone"/></p>
+            <p><button>Save Changes</button></p>
+        </div>
+        <div class="section">
+            <h2>Register New Student</h2>
+            <p>student ID : <input id="newId"/></p>
+            <p>student Name : <input id="newName" /></p>
+            <p>student  Department: <input id="newDepartment" /></p>
+            <p>student City : <input id="newCity" /></p>
+            <p>student Email : <input id="newEmail" /></p>
+            <p>student Phone : <input id="newPhone" /></p>
+            <p><button>Add student</button></p>
+        </div>
+    </body>
+</html>
